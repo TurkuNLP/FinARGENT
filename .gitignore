@@ -1,3 +1,8 @@
+# Folders
+BLEURT-20/
+bleurt-deps/
+data/*
+DatasetPipeline_job.sh
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
