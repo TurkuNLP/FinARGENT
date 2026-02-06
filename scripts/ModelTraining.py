@@ -170,7 +170,7 @@ if __name__ == "__main__":
         t['score'] = float(x['bleurt_score'])
         corr_samples[i]=t
     #print("Finished formatting!")
-    ds = Dataset.from_list(corr_samples).rename_column("score", "label").train_test_split(test_size=0.2)
+    ds = Dataset.from_list(corr_samples).rename_column("score", "label").shuffle().train_test_split(test_size=0.2)
     corr_samples = []
     del corr_samples
     #print("Dataset created!")
