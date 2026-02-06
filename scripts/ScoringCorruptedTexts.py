@@ -14,8 +14,8 @@ def main(cmd_args):
     checkpoint = "BLEURT-20"
 
     scorer = score.BleurtScorer(checkpoint)
-    with tqdm(range(len(ds_name))) as pbar:
-        for i, x in enumerate(ds_name):
+    with tqdm(range(len(corr_ds))) as pbar:
+        for i, x in enumerate(corr_ds):
             s = scorer.score(references=[x['ref_text']], candidates=[x['text']])[0]
             x['bleurt_score'] = min(1,s)
             corr_ds[i] = x
@@ -23,7 +23,7 @@ def main(cmd_args):
     
     with open("data/CorruptedDatasets_ready/"+ds_name+".jsonl", 'w', encoding='utf-8') as writer:
         for l in corr_ds:
-                writer.write(json.dumps(l)+'\n')
+            writer.write(json.dumps(l)+'\n')
 
 if __name__ == "__main__":
     main(sys.argv[1:])

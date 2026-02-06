@@ -101,7 +101,7 @@ if __name__ == "__main__":
     model = AutoModelForSequenceClassification.from_pretrained(
         args.model,
         num_labels=1,
-        torch_dtype=torch.bfloat16,
+        dtype=torch.bfloat16,
         device_map=device,
         # attn_implementation="flash_attention_2",
         )
@@ -162,18 +162,18 @@ if __name__ == "__main__":
         for l in reader:
             if len(l) > 0:
                 corr_samples.append(json.loads(l))
-    print("Loaded corrupt samples!")
+    #print("Loaded corrupt samples!")
 
     for i, x in enumerate(corr_samples):
         t = {}
         t['text'] = x['text']
         t['score'] = float(x['bleurt_score'])
         corr_samples[i]=t
-    print("Finished formatting!")
+    #print("Finished formatting!")
     ds = Dataset.from_list(corr_samples).rename_column("score", "label").train_test_split(test_size=0.2)
     corr_samples = []
     del corr_samples
-    print("Dataset created!")
+    #print("Dataset created!")
     # %%
     def tokenize(ex):
         return tokenizer(
@@ -183,7 +183,7 @@ if __name__ == "__main__":
             padding='max_length',
             truncation=True,
         )
-    print("Moving to tokenization!")
+    #print("Moving to tokenization!")
     tok_train = ds['train'].map(tokenize, num_proc=training_args.dataloader_num_workers, batched=True, keep_in_memory=False, cache_file_name="data/output_cache/train_cache.tmp")
     tok_train.set_format("pt", columns=["input_ids"], output_all_columns=True)
     tok_val_test = ds['test'].train_test_split(test_size=0.5, keep_in_memory=True).map(tokenize, num_proc=training_args.dataloader_num_workers, batched=True)
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     trainer = Trainer(
         model=model,
         args=training_args,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         data_collator=collator,
         train_dataset=tok_train,
         eval_dataset=tok_val,
