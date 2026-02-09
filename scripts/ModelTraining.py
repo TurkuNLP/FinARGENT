@@ -15,7 +15,7 @@ import json
 import torch
 from sklearn import metrics
 import numpy as np
-from datasets import DatasetDict, Dataset
+from datasets import DatasetDict, Dataset, load_dataset
 from transformers import (AutoModelForSequenceClassification, AutoTokenizer,
                           DataCollatorWithPadding, Trainer,
                           TrainingArguments)
@@ -119,10 +119,10 @@ if __name__ == "__main__":
         overwrite_output_dir=not args.resume,
         # save_strategy="no",  # good for testing
         save_strategy="steps",   # use these if you actually want to save the model
-        save_steps=800,
+        save_steps=10000,
         save_total_limit=4,
         eval_strategy="steps",
-        eval_steps=400,  # compute validation loss every 200 steps
+        eval_steps=5000,  # compute validation loss every 200 steps
         learning_rate=1e-5,
         weight_decay=0.01,
         bf16=True,  # use 16-bit floating point precision
@@ -163,7 +163,7 @@ if __name__ == "__main__":
             if len(l) > 0:
                 corr_samples.append(json.loads(l))
     #print("Loaded corrupt samples!")
-
+    #print(len(corr_samples))
     for i, x in enumerate(corr_samples):
         t = {}
         t['text'] = x['text']
@@ -171,6 +171,8 @@ if __name__ == "__main__":
         corr_samples[i]=t
     #print("Finished formatting!")
     ds = Dataset.from_list(corr_samples).rename_column("score", "label").shuffle().train_test_split(test_size=0.2)
+    from pprint import pprint
+    #pprint(ds)
     corr_samples = []
     del corr_samples
     #print("Dataset created!")
@@ -184,7 +186,8 @@ if __name__ == "__main__":
             truncation=True,
         )
     #print("Moving to tokenization!")
-    tok_train = ds['train'].map(tokenize, num_proc=training_args.dataloader_num_workers, batched=True, keep_in_memory=False, cache_file_name="data/output_cache/train_cache.tmp")
+    tok_train = ds['train'].map(tokenize, num_proc=training_args.dataloader_num_workers, batched=True, keep_in_memory=True)
+    #tok_train = load_dataset("data/output_cache/")
     tok_train.set_format("pt", columns=["input_ids"], output_all_columns=True)
     tok_val_test = ds['test'].train_test_split(test_size=0.5, keep_in_memory=True).map(tokenize, num_proc=training_args.dataloader_num_workers, batched=True)
     tok_val = tok_val_test['train']
@@ -193,7 +196,9 @@ if __name__ == "__main__":
     tok_test.set_format("pt", columns=["input_ids"], output_all_columns=True)
     ds = []
     del ds
-
+    #pprint(tok_train)
+    #pprint(tok_val)
+    #pprint(tok_test)
     # Metrics for the model
     def compute_metrics_for_regression(eval_pred):
         logits, labels = eval_pred

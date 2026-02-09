@@ -2,7 +2,12 @@
 BLEURT-20/
 bleurt-deps/
 data/*
+slurm_archive/*
+mlruns/*
+# Custom files
 DatasetPipeline_job.sh
+ModelTrainJob.sh
+*.db
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

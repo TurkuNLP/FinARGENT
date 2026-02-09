@@ -145,7 +145,7 @@ def corruptWordForm(sample_dict, probability, lex_data_words2lemmas, lex_data_le
         return {'id':sample_dict['id'], 'text':corrupted_text, 'corruptions':corruptions.copy()}
     
 
-def applyCorruptions(gold_texts, min_probability, max_probability):
+def applyOriginalArgentCorruptions(gold_texts, min_probability, max_probability):
     corrupted_ds_items = []
     # 
     corruption_level_distr = generateProbabilityDistribution(len(gold_texts), min_probability, max_probability)
@@ -182,7 +182,7 @@ def main(cmd_args):
                 except:
                     file_contents = line.strip()
                 ds_items.append({'id':item_id, 'text':file_contents})
-    corr_ds_items = applyCorruptions(ds_items, min_probability, max_probability)
+    corr_ds_items = applyOriginalArgentCorruptions(ds_items, min_probability, max_probability)
 
     with open("data/CorruptedDatasets_cache/"+ds_name+".jsonl", 'w', encoding="utf-8") as writer:
         for i in range(len(corr_ds_items)):
