@@ -34,7 +34,7 @@ def absoluteFilePaths(directory):
 def generateProbabilityDistribution(num_items, min_prob, max_prob):
     # Function that "guarantees" varying levels of corruption ends up in the training dataset
     # This is done, because we only get one corruption per sample, so it's likely we would only get quite corrupted versions...
-    return list(np.linspace(min_prob, max_prob, num_items))
+    return list(np.random.normal(abs(max_prob-min_prob), abs(max_prob-min_prob)/2, num_items))
 
 def capitalize(text):
     # A very simple function that fixes some outrageous capitalization mistakes that can result from swapping places of words

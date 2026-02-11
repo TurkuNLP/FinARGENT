@@ -8,6 +8,7 @@ mlruns/*
 DatasetPipeline_job.sh
 ModelTrainJob.sh
 *.db
+data_looker.ipynb
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

@@ -31,9 +31,9 @@ def main():
             while len(ds_items) > 0:
                 text = ds_items.pop()
                 approx_sentences = text.split('. ')
-                if len(approx_sentences) > 14:
-                    for i in range(0, len(approx_sentences), 15):
-                        chunk = approx_sentences[i:i+15]
+                if len(approx_sentences) > 9:
+                    for i in range(0, len(approx_sentences), 10):
+                        chunk = approx_sentences[i:i+10]
                         new_text = '.'.join(chunk)
                         if len(new_text) > 100:
                             ds_items_snipped.append(new_text.strip())
